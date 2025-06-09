@@ -91,6 +91,10 @@ describe("ClaudeCodeSend Command Range Functionality", function()
       warn = function() end
     }
 
+    local mock_diff = {
+      setup = function() end
+    }
+
     -- Setup require mocks
     local original_require = _G.require
     _G.require = function(module_name)
@@ -106,6 +110,8 @@ describe("ClaudeCodeSend Command Range Functionality", function()
         return mock_config
       elseif module_name == "claudecode.logger" then
         return mock_logger
+      elseif module_name == "claudecode.diff" then
+        return mock_diff
       else
         return original_require(module_name)
       end
