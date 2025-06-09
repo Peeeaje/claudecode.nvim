@@ -466,7 +466,7 @@ describe("Range Selection Tests", function()
         name = "/test/file.lua",
         lines = {
           "line 1",
-          "line 2", 
+          "line 2",
           "line 3",
           "line 4",
           "line 5",
@@ -498,7 +498,7 @@ describe("Range Selection Tests", function()
   describe("get_range_selection", function()
     it("should return valid selection for valid range", function()
       local result = selection.get_range_selection(2, 4)
-      
+
       assert(result ~= nil)
       assert(result.text == "line 2\nline 3\nline 4")
       assert(result.filePath == "/test/file.lua")
@@ -512,7 +512,7 @@ describe("Range Selection Tests", function()
 
     it("should return valid selection for single line range", function()
       local result = selection.get_range_selection(3, 3)
-      
+
       assert(result ~= nil)
       assert(result.text == "line 3")
       assert(result.selection.start.line == 2) -- 0-indexed
@@ -522,7 +522,7 @@ describe("Range Selection Tests", function()
 
     it("should handle range that exceeds buffer bounds", function()
       local result = selection.get_range_selection(8, 15) -- buffer only has 10 lines
-      
+
       assert(result ~= nil)
       assert(result.text == "line 8\nline 9\nline 10")
       assert(result.selection.start.line == 7) -- 0-indexed
@@ -548,7 +548,7 @@ describe("Range Selection Tests", function()
       local result1 = selection.get_range_selection(nil, 3)
       local result2 = selection.get_range_selection(2, nil)
       local result3 = selection.get_range_selection(nil, nil)
-      
+
       assert(result1 == nil)
       assert(result2 == nil)
       assert(result3 == nil)
@@ -574,14 +574,14 @@ describe("Range Selection Tests", function()
           return true
         end
       }
-      
+
       selection.state.tracking_enabled = true
       selection.server = mock_server
     end)
 
     it("should send range selection successfully", function()
       local result = selection.send_at_mention_for_visual_selection(2, 4)
-      
+
       assert(result == true)
       assert(mock_server.last_broadcast ~= nil)
       assert(mock_server.last_broadcast.event == "at_mentioned")
@@ -607,9 +607,9 @@ describe("Range Selection Tests", function()
           isEmpty = false
         }
       }
-      
+
       local result = selection.send_at_mention_for_visual_selection()
-      
+
       assert(result == true)
       assert(mock_server.last_broadcast.params.lineStart == 0)
       assert(mock_server.last_broadcast.params.lineEnd == 0)

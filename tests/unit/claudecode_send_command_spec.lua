@@ -34,7 +34,7 @@ describe("ClaudeCodeSend Command Range Functionality", function()
       notify = spy.new(function() end),
       log = { levels = { ERROR = 1, WARN = 2, INFO = 3 } },
       deepcopy = function(t) return t end,
-      tbl_deep_extend = function(behavior, ...) 
+      tbl_deep_extend = function(behavior, ...)
         local result = {}
         for _, tbl in ipairs({...}) do
           for k, v in pairs(tbl) do
@@ -74,7 +74,7 @@ describe("ClaudeCodeSend Command Range Functionality", function()
     }
 
     local mock_config = {
-      apply = function(opts) 
+      apply = function(opts)
         return {
           auto_start = false,
           track_selection = true,
@@ -114,7 +114,7 @@ describe("ClaudeCodeSend Command Range Functionality", function()
     -- Load and setup claudecode
     claudecode = require("claudecode")
     claudecode.setup({})
-    
+
     -- Manually set server state for testing
     claudecode.state.server = mock_server
     claudecode.state.port = 12345
@@ -128,7 +128,7 @@ describe("ClaudeCodeSend Command Range Functionality", function()
   describe("ClaudeCodeSend command", function()
     it("should be registered with range support", function()
       assert.spy(_G.vim.api.nvim_create_user_command).was_called()
-      
+
       -- Find the ClaudeCodeSend command call
       local calls = _G.vim.api.nvim_create_user_command.calls
       local claudecode_send_call = nil
@@ -138,23 +138,23 @@ describe("ClaudeCodeSend Command Range Functionality", function()
           break
         end
       end
-      
+
       assert(claudecode_send_call ~= nil, "ClaudeCodeSend command should be registered")
       assert(claudecode_send_call.vals[3].range == true, "ClaudeCodeSend should support ranges")
     end)
 
     it("should pass range information to selection module when range is provided", function()
       assert(command_callback ~= nil, "Command callback should be set")
-      
+
       -- Simulate command called with range
       local opts = {
         range = 2,
         line1 = 5,
         line2 = 8
       }
-      
+
       command_callback(opts)
-      
+
       assert.spy(mock_selection_module.send_at_mention_for_visual_selection).was_called()
       assert(mock_selection_module.last_call.line1 == 5)
       assert(mock_selection_module.last_call.line2 == 8)
@@ -162,16 +162,16 @@ describe("ClaudeCodeSend Command Range Functionality", function()
 
     it("should not pass range information when range is 0", function()
       assert(command_callback ~= nil, "Command callback should be set")
-      
+
       -- Simulate command called without range
       local opts = {
         range = 0,
         line1 = 1,
         line2 = 1
       }
-      
+
       command_callback(opts)
-      
+
       assert.spy(mock_selection_module.send_at_mention_for_visual_selection).was_called()
       assert(mock_selection_module.last_call.line1 == nil)
       assert(mock_selection_module.last_call.line2 == nil)
@@ -179,12 +179,12 @@ describe("ClaudeCodeSend Command Range Functionality", function()
 
     it("should not pass range information when range is nil", function()
       assert(command_callback ~= nil, "Command callback should be set")
-      
+
       -- Simulate command called without range
       local opts = {}
-      
+
       command_callback(opts)
-      
+
       assert.spy(mock_selection_module.send_at_mention_for_visual_selection).was_called()
       assert(mock_selection_module.last_call.line1 == nil)
       assert(mock_selection_module.last_call.line2 == nil)
@@ -192,53 +192,53 @@ describe("ClaudeCodeSend Command Range Functionality", function()
 
     it("should exit visual mode and focus terminal on successful send", function()
       assert(command_callback ~= nil, "Command callback should be set")
-      
+
       local opts = {
         range = 2,
         line1 = 5,
         line2 = 8
       }
-      
+
       command_callback(opts)
-      
+
       assert.spy(_G.vim.api.nvim_feedkeys).was_called()
       assert.spy(mock_terminal.open).was_called()
     end)
 
     it("should handle server not running", function()
       assert(command_callback ~= nil, "Command callback should be set")
-      
+
       -- Simulate server not running
       claudecode.state.server = nil
-      
+
       local opts = {
         range = 2,
         line1 = 5,
         line2 = 8
       }
-      
+
       command_callback(opts)
-      
+
       assert.spy(_G.vim.notify).was_called()
       assert.spy(mock_selection_module.send_at_mention_for_visual_selection).was_not_called()
     end)
 
     it("should handle selection module failure", function()
       assert(command_callback ~= nil, "Command callback should be set")
-      
+
       -- Mock selection module to return false
       mock_selection_module.send_at_mention_for_visual_selection = spy.new(function()
         return false
       end)
-      
+
       local opts = {
         range = 2,
         line1 = 5,
         line2 = 8
       }
-      
+
       command_callback(opts)
-      
+
       assert.spy(mock_selection_module.send_at_mention_for_visual_selection).was_called()
       -- Should not exit visual mode or focus terminal on failure
       assert.spy(_G.vim.api.nvim_feedkeys).was_not_called()

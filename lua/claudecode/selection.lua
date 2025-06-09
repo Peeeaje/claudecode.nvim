@@ -585,10 +585,10 @@ function M.get_range_selection(line1, line2)
 
   local current_buf = vim.api.nvim_get_current_buf()
   local file_path = vim.api.nvim_buf_get_name(current_buf)
-  
+
   -- Get the total number of lines in the buffer
   local total_lines = vim.api.nvim_buf_line_count(current_buf)
-  
+
   -- Ensure line2 doesn't exceed buffer bounds
   if line2 > total_lines then
     line2 = total_lines
