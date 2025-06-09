@@ -402,6 +402,17 @@ function M._create_commands()
       vim.notify("Claude Code integration is not running", vim.log.levels.ERROR)
       return
     end
+    logger.debug(
+      "command",
+      "ClaudeCodeSend invoked. Mode: "
+        .. vim.fn.mode(true)
+        .. ", Range: "
+        .. tostring(opts and opts.range)
+        .. ", Line1: "
+        .. tostring(opts and opts.line1)
+        .. ", Line2: "
+        .. tostring(opts and opts.line2)
+    )
 
     local current_ft = vim.bo.filetype
     local current_bufname = vim.api.nvim_buf_get_name(0)
@@ -434,7 +445,12 @@ function M._create_commands()
 
     local selection_module_ok, selection_module = pcall(require, "claudecode.selection")
     if selection_module_ok then
-      local sent_successfully = selection_module.send_at_mention_for_visual_selection()
+      -- Pass range information if available (for :'<,'> commands)
+      local line1, line2 = nil, nil
+      if opts and opts.range and opts.range > 0 then
+        line1, line2 = opts.line1, opts.line2
+      end
+      local sent_successfully = selection_module.send_at_mention_for_visual_selection(line1, line2)
       if sent_successfully then
         local terminal_ok, terminal = pcall(require, "claudecode.terminal")
         if terminal_ok then
