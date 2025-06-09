@@ -17,6 +17,7 @@ describe("ClaudeCodeSend Command Range Functionality", function()
     package.loaded["claudecode.lockfile"] = nil
     package.loaded["claudecode.config"] = nil
     package.loaded["claudecode.logger"] = nil
+    package.loaded["claudecode.diff"] = nil
 
     -- Mock vim API
     _G.vim = {
@@ -95,7 +96,7 @@ describe("ClaudeCodeSend Command Range Functionality", function()
       setup = function() end
     }
 
-    -- Setup require mocks
+    -- Setup require mocks BEFORE requiring claudecode
     local original_require = _G.require
     _G.require = function(module_name)
       if module_name == "claudecode.selection" then
